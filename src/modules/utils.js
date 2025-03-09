@@ -8,14 +8,53 @@ function removeRule(grammar, ruleName) {
     delete grammar.rules[ruleName];
     assert(Object.keys(grammar.rules).length === originalRuleCount - 1, `Rule "${ruleName}" not deleted.`);
 
-    // ... (rest of the removeReferences function remains the same) ...
-    // ... (inside removeReferences) ...
-        if (obj[i].name === ruleName) {
-            obj.splice(i, 1);
-            i--;
-            assert(obj[i]?.name !== ruleName, `Failed to remove reference to ${ruleName}`); //Check removal
+    // Recursively remove references to the rule
+    function removeReferences(obj) {
+        if (Array.isArray(obj)) {
+            for (let i = 0; i < obj.length; i++) {
+                if (typeof obj[i] === 'object' && obj[i] !== null) {
+                    if (obj[i].name === ruleName) {
+                        obj.splice(i, 1);
+                        i--; // Adjust index after removal
+                        assert(obj[i]?.name !== ruleName, `Failed to remove reference to ${ruleName}`); //Check removal
+
+                    } else {
+                        removeReferences(obj[i]);
+                    }
+                }
+            }
+        } else if (typeof obj === 'object' && obj !== null) {
+            for (const key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    if (typeof obj[key] === 'object' && obj[key] !== null) {
+                        if (obj[key].name === ruleName) {
+                            delete obj[key];
+                        } else {
+                            removeReferences(obj[key]);
+                        }
+                    }
+                }
+            }
         }
-     // ... (rest of the removeReferences function remains the same) ...
+    }
+
+    for (const ruleKey in grammar.rules) {
+        removeReferences(grammar.rules[ruleKey]);
+    }
+     // Remove from supertypes
+    if (grammar.supertypes) {
+      grammar.supertypes = grammar.supertypes.filter(type => type.name !== ruleName);
+    }
+    // Remove from conflicts
+    if (grammar.conflicts) {
+      grammar.conflicts = grammar.conflicts.filter(conflict =>
+        !conflict.some(member => member.name === ruleName)
+      );
+    }
+    // Remove from externals
+    if (grammar.externals) {
+        grammar.externals = grammar.externals.filter(external => external.name !== ruleName );
+    }
 }
 
 function modifyRule(grammar, ruleName, newRule) {
@@ -43,13 +82,51 @@ function renameRule(grammar, oldName, newName) {
     assert(!grammar.rules.hasOwnProperty(oldName), `Original Rule "${oldName}" not deleted.`);
     assert(grammar.rules.hasOwnProperty(newName), `New Rule "${newName}" not created.`);
 
-    // ... (rest of the renameReferences function remains the same) ...
-    // ... (inside renameReferences) ...
-        if (item.name === oldName) {
-            item.name = newName;
-            assert(item.name === newName, `Failed to rename ${oldName} to ${newName}`);
+    // Recursively rename references to the rule
+    function renameReferences(obj) {
+      if (Array.isArray(obj)) {
+        for (const item of obj) {
+          if (typeof item === 'object' && item !== null) {
+            if (item.name === oldName) {
+              item.name = newName;
+              assert(item.name === newName, `Failed to rename ${oldName} to ${newName}`);
+            }
+            renameReferences(item);
+          }
         }
-    // ... (rest of the renameReferences function remains the same) ...
+      } else if (typeof obj === 'object' && obj !== null) {
+        for (const key in obj) {
+          if (obj.hasOwnProperty(key)) {
+            if (typeof obj[key] === 'object' && obj[key] !== null) {
+              if (obj[key].name === oldName) {
+                obj[key].name = newName;
+              }
+              renameReferences(obj[key]);
+            }
+          }
+        }
+      }
+    }
+
+    for (const ruleKey in grammar.rules) {
+        renameReferences(grammar.rules[ruleKey]);
+    }
+
+    // Rename in supertypes
+    if (grammar.supertypes) {
+      grammar.supertypes.forEach(type => { if (type.name === oldName) type.name = newName; });
+    }
+
+    // Rename in conflicts
+    if (grammar.conflicts) {
+      grammar.conflicts.forEach(conflict => {
+        conflict.forEach(member => { if (member.name === oldName) member.name = newName; });
+      });
+    }
+    // Rename in externals
+    if (grammar.externals) {
+        grammar.externals.forEach( external => {if (external.name === oldName) external.name = newName;} );
+    }
 }
 
 module.exports = { removeRule, modifyRule, addRule, renameRule };
