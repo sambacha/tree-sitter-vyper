@@ -1,44 +1,5 @@
-/**
- * @file Python grammar for tree-sitter
- * @author Max Brunsfeld <maxbrunsfeld@gmail.com>
- * @license MIT
- * @see {@link https://docs.python.org/2/reference/grammar.html|Python 2 grammar}
- * @see {@link https://docs.python.org/3/reference/grammar.html|Python 3 grammar}
- */
-
-
-/// <reference types="tree-sitter-cli/dsl" />
-// @ts-check
-
-const PREC = {
-  // this resolves a conflict between the usage of ':' in a lambda vs in a
-  // typed parameter. In the case of a lambda, we don't allow typed parameters.
-  lambda: -2,
-  typed_parameter: -1,
-  conditional: -1,
-
-  parenthesized_expression: 1,
-  parenthesized_list_splat: 1,
-  or: 10,
-  and: 11,
-  not: 12,
-  compare: 13,
-  bitwise_or: 14,
-  bitwise_and: 15,
-  xor: 16,
-  shift: 17,
-  plus: 18,
-  times: 19,
-  unary: 20,
-  power: 21,
-  call: 22,
-};
-
-const SEMICOLON = ';';
-
-module.exports = grammar({
-  name: 'python',
-
+const grammar = require('tree-sitter')
+module.exports = new grammar({  name: 'python',
   extras: $ => [
     $.comment,
     /[\s\f\uFEFF\u2060\u200B]|\r?\n/,
@@ -1206,29 +1167,3 @@ module.exports = grammar({
     keyword_separator: _ => '*',
   },
 });
-
-module.exports.PREC = PREC;
-
-/**
- * Creates a rule to match one or more of the rules separated by a comma
- *
- * @param {RuleOrLiteral} rule
- *
- * @returns {SeqRule}
- */
-function commaSep1(rule) {
-  return sep1(rule, ',');
-}
-
-/**
- * Creates a rule to match one or more occurrences of `rule` separated by `sep`
- *
- * @param {RuleOrLiteral} rule
- *
- * @param {RuleOrLiteral} separator
- *
- * @returns {SeqRule}
- */
-function sep1(rule, separator) {
-  return seq(rule, repeat(seq(separator, rule)));
-}
