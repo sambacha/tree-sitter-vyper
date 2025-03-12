@@ -43,6 +43,9 @@ vyperGrammar = require('./modules/04_add_vyper_types')(vyperGrammar, wrappedUtil
 vyperGrammar = require('./modules/05_add_decorators')(vyperGrammar, wrappedUtils);
 vyperGrammar = require('./modules/06_add_contract')(vyperGrammar, wrappedUtils);
 vyperGrammar = require('./modules/07_add_builtins')(vyperGrammar, wrappedUtils);
+vyperGrammar = require('./modules/08_add_events_and_structs')(vyperGrammar, wrappedUtils);
+vyperGrammar = require('./modules/09_add_enums')(vyperGrammar, wrappedUtils);
+vyperGrammar = require('./modules/10_add_interfaces')(vyperGrammar, wrappedUtils);
 
 stats.finalRuleCount = Object.keys(vyperGrammar.rules).length;
 

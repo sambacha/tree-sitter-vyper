@@ -1,8 +1,8 @@
 // modules/06_add_contract.js
-//const { addRule, renameRule, modifyRule } = require('./utils');
+//const { addRule, modifyRule } = require('./utils');
 
 module.exports = function (grammar, utils) {
-    const {addRule, renameRule} = utils;
+    const {addRule} = utils;
       addRule(grammar, 'contract_definition', {
         type: 'SEQ',
         members:[
@@ -33,8 +33,8 @@ module.exports = function (grammar, utils) {
         ]
     });
 
-  //Rename class definition to contract definition
-    renameRule(grammar, 'class_definition', 'contract_definition');
+  // Note: class_definition is already removed in 01_remove_features.js
+  // so we don't need to rename it
 
     //Update conflicts
     grammar.conflicts.push([

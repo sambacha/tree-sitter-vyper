@@ -1,7 +1,7 @@
 // modules/03_modify_functions.js
-const { modifyRule, addRule } = require('./utils');
+const { modifyRule, addRule, removeRule } = require('./utils');
 
-module.exports = function (grammar) {
+module.exports = function (grammar, utils) {
     modifyRule(grammar, 'function_definition', {
         type: 'SEQ',
         members:[
