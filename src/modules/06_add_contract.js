@@ -33,19 +33,5 @@ module.exports = function (grammar, utils) {
         ]
     });
 
-  // Note: class_definition is already removed in 01_remove_features.js
-  // so we don't need to rename it
-
-    //Update conflicts
-    grammar.conflicts.push([
-        {
-            type: 'SYMBOL',
-            name: 'function_definition'
-        },
-        {
-            type: 'SYMBOL',
-            name: 'expression_statement'
-        }
-    ]);
   return grammar;
 };

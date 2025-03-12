@@ -44,17 +44,5 @@ module.exports = function (grammar, utils) {
     });
 
       //Update supertypes
-    grammar.supertypes.push(
-        {
-            type: 'SYMBOL',
-            name: 'vyper_decorator'
-        }
-    );
-
-    //Update externals
-    grammar.externals.push(
-        {type: 'STRING', value: 'nonreentrant'}
-    );
-
     return grammar;
 };

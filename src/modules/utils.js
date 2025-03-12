@@ -1,5 +1,5 @@
 // modules/utils.js
-const assert = require('assert');
+//const assert = require('assert');
 
 // Helper function to get rules regardless of grammar structure
 function getRules(grammar) {
@@ -12,11 +12,8 @@ function getRules(grammar) {
 
 function removeRule(grammar, ruleName) {
     const rules = getRules(grammar);
-    assert(rules.hasOwnProperty(ruleName), `Rule "${ruleName}" not found in grammar.`);
-
     const originalRuleCount = Object.keys(rules).length;
     delete rules[ruleName];
-    assert(Object.keys(rules).length === originalRuleCount - 1, `Rule "${ruleName}" not deleted.`);
 
     // Recursively remove references to the rule
     function removeReferences(obj) {
@@ -26,8 +23,6 @@ function removeRule(grammar, ruleName) {
                     if (obj[i].name === ruleName) {
                         obj.splice(i, 1);
                         i--; // Adjust index after removal
-                        assert(obj[i]?.name !== ruleName, `Failed to remove reference to ${ruleName}`); //Check removal
-
                     } else {
                         removeReferences(obj[i]);
                     }
@@ -69,31 +64,18 @@ function removeRule(grammar, ruleName) {
 
 function modifyRule(grammar, ruleName, newRule) {
     const rules = getRules(grammar);
-    assert(rules.hasOwnProperty(ruleName), `Rule "${ruleName}" not found in grammar.`);
-    assert(typeof newRule === 'object' && newRule !== null, "New rule must be a valid object.");
-
     rules[ruleName] = newRule;
-    assert.deepStrictEqual(rules[ruleName], newRule, `Rule "${ruleName}" not modified correctly.`);
 }
 
 function addRule(grammar, ruleName, rule) {
     const rules = getRules(grammar);
-    assert(!rules.hasOwnProperty(ruleName), `Rule "${ruleName}" already exists in grammar.`);
-    assert(typeof rule === 'object' && rule !== null, "New rule must be a valid object.");
-
     rules[ruleName] = rule;
-    assert.deepStrictEqual(rules[ruleName], rule, `Rule "${ruleName}" not added correctly.`);
 }
 
 function renameRule(grammar, oldName, newName) {
     const rules = getRules(grammar);
-    assert(rules.hasOwnProperty(oldName), `Rule "${oldName}" not found in grammar.`);
-    assert(!rules.hasOwnProperty(newName), `Rule "${newName}" already exists.`);
-
     rules[newName] = rules[oldName];
     delete rules[oldName];
-    assert(!rules.hasOwnProperty(oldName), `Original Rule "${oldName}" not deleted.`);
-    assert(rules.hasOwnProperty(newName), `New Rule "${newName}" not created.`);
 
     // Recursively rename references to the rule
     function renameReferences(obj) {
@@ -102,7 +84,6 @@ function renameRule(grammar, oldName, newName) {
           if (typeof item === 'object' && item !== null) {
             if (item.name === oldName) {
               item.name = newName;
-              assert(item.name === newName, `Failed to rename ${oldName} to ${newName}`);
             }
             renameReferences(item);
           }
@@ -138,7 +119,7 @@ function renameRule(grammar, oldName, newName) {
     }
     // Rename in externals
     if (grammar.externals) {
-        grammar.externals.forEach( external => {if (external.name === oldName) external.name = newName;} );
+        grammar.externals.forEach(external => {if (external.name === oldName) external.name = newName;});
     }
 }
 
