@@ -118,7 +118,12 @@ module.exports = function (grammar, utils) {
         type: 'SYMBOL', name: 'identifier'  // Similar to struct_type, it's just an identifier
     });
 
-    //Update externals
+    // Initialize the externals array if it doesn't exist
+    if (!grammar.externals) {
+        grammar.externals = [];
+    }
+
+    // Now it's safe to push to it
     grammar.externals.push(
         { type: 'STRING', value: 'uint8' },
         { type: 'STRING', value: 'uint16' },

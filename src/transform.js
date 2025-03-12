@@ -38,8 +38,8 @@ const wrappedUtils = {
 let vyperGrammar = pythonGrammar;
 vyperGrammar = require('./modules/01_remove_features')(vyperGrammar, wrappedUtils);
 vyperGrammar = require('./modules/02_modify_imports')(vyperGrammar, wrappedUtils);
-//vyperGrammar = require('./modules/03_modify_functions')(vyperGrammar, wrappedUtils);
-//vyperGrammar = require('./modules/04_add_vyper_types')(vyperGrammar, wrappedUtils);
+vyperGrammar = require('./modules/03_modify_functions')(vyperGrammar, wrappedUtils);
+vyperGrammar = require('./modules/04_add_vyper_types')(vyperGrammar, wrappedUtils);
 vyperGrammar = require('./modules/05_add_decorators')(vyperGrammar, wrappedUtils);
 vyperGrammar = require('./modules/06_add_contract')(vyperGrammar, wrappedUtils);
 vyperGrammar = require('./modules/07_add_builtins')(vyperGrammar, wrappedUtils);
@@ -58,6 +58,6 @@ console.log(`  Rules Added: ${stats.rulesAdded}`);
 console.log(`  Rules Removed: ${stats.rulesRemoved}`);
 console.log(`  Rules Modified: ${stats.rulesModified}`);
 console.log(`  Rules Renamed: ${stats.rulesRenamed}`);
-// console.log(`  Initial Rule Count: ${stats.initialRuleCount}`);
+console.log(`  Initial Rule Count: ${stats.initialRuleCount}`);
 console.log(`  Final Rule Count: ${stats.finalRuleCount}`);
 console.log(`  Net Rule Change: ${stats.finalRuleCount - stats.initialRuleCount}`);
